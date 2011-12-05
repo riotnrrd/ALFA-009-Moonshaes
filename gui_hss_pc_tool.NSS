@@ -215,6 +215,7 @@ No (2)
 #include "x0_i0_position"
 #include "nwnx_sql"
 #include "acr_skills_i"
+#include "acr_time_i"
 #include "acr_resting_i"
 #include "acr_pps_i"
 #include "acr_game_loc_i"
@@ -359,6 +360,8 @@ const string HSS_PCTOOLS_CUSTOM36_TEXT = "Target 18";
 const int HSS_PCTOOLS_DMFI_PLUGIN_PC = 1;
 
 //Colour strings for feedback messages.
+const string HSS_PCTOOLS_COL1 = "#C1AB89";
+const string HSS_PCTOOLS_COL2 = "#EFD4AC";
 const string HSS_PCTOOLS_COLOUR1 = "<color=#C1AB89>";
 const string HSS_PCTOOLS_COLOUR2 = "<color=#EFD4AC>";
 const string HSS_PCTOOLS_COLOUR_END = "</c>";
@@ -1489,35 +1492,6 @@ void HSS_PCTools_OnGUICreate(object oPC, int nGUI = 1)
 			    SetLocalString(oPC, "PC_TOOLS_MACRO_BUTTON_" + HSS_IntToLeadingZeroString(nCount), sText);
 			}
 		}
-		/*  Commented out by AcadiusLost for ALFA
-	   while (nCount <= 45)
-	       {
-		   sHelp = HSS_PCTools_RetrievePersistentData(oPC, "PC_TOOLS_MACRO_BUTTON_" +
-						       HSS_IntToLeadingZeroString(nCount) + "_LABEL", "pctools--" + sPCID, HSS_PC_TOOLS_STRING);
-							
-		   if (sHelp != "")
-		      {
-		      SetGUIObjectText(oPC, SCREEN_HSS_PC_TOOLS_TM_V, "PC_TOOLS_MACRO_BUTTON_" + HSS_IntToLeadingZeroString(nCount),
-		                      -1, sHelp);			  
-			  }
-			  
-		   sHelp = HSS_PCTools_RetrievePersistentData(oPC, "PC_TOOLS_MACRO_BUTTON_" +
-						       HSS_IntToLeadingZeroString(nCount), "pctools--" + sPCID, HSS_PC_TOOLS_STRING);
-		   if (sHelp != "")
-		      {
-			  SetLocalString(oPC, "PC_TOOLS_MACRO_BUTTON_" + HSS_IntToLeadingZeroString(nCount), sHelp);				  			  
-			  }
-
-		   sHelp = HSS_PCTools_RetrievePersistentData(oPC, "PC_TOOLS_MACRO_BUTTON_" +
-						       HSS_IntToLeadingZeroString(nCount) + "_VOLUME", "pctools--" + sPCID, HSS_PC_TOOLS_INT);
-		   if (sHelp != "")
-		      {
-			  				  			  
-			  }
-			  							   			  			  			  					
-		   nCount++;
-		   }
-		*/
 	   //we're on page 1 -- need a space or single quotes when passing
 	   //a pure int -- engine bug	   
 	   SetLocalGUIVariable(oPC, SCREEN_HSS_PC_TOOLS_TM_V, 55, "'1'");
@@ -1625,16 +1599,6 @@ void HSS_PCTools_OnGUIAdd(object oPC, int nGUI = 1)
 
 void HSS_PCTools_SaveCharacter(object oPC, string sPCID)
 {
-   //string sMsg = HSS_SAVE_MESSAGE;
-   //
-   //if (HSS_PCTOOLS_SAVE_LOC)
-   //   {
-   //   HSS_PCTools_StorePersistentData(oPC, HSS_PCTOOLS_LOC_VAR, "pctools--" + sPCID,
-   //                        HSS_PC_TOOLS_LOC, LocationToString(GetLocation(oPC)));
-   //	  sMsg = HSS_SAVE_MESSAGE_W_LOC;	  
-   //	  }
-
-   //ExportSingleCharacter(oPC);
    SendMessageToPC(oPC, "Saving PC location and exporting character data.");
    ACR_PCSave(oPC, TRUE, TRUE);
 }
@@ -1643,239 +1607,25 @@ void HSS_PCTools_GetTime(object oPC)
 {
    int nHour = GetTimeHour();
    int nMinute = FloatToInt(60.0 * (IntToFloat(GetTimeMinute()*60 + GetTimeSecond()) / (HoursToSeconds(1))));
-   int nDay = GetCalendarDay();
-   int nMonth = GetCalendarMonth();
-   int nYear = GetCalendarYear();
-   string sDay;
-   string sMonth;
    string sAm;
+   string sDate;
    string sMsg;
 
-/* GreyHawk Calendar   	  
-   switch (nDay)
-       {
-       case 1:
-       case 8:
-       case 15:
-       case 22:
-       sDay = "Starday";
-       break;
+   sDate = ACR_FRDateToString();
 	   
-       case 2:
-       case 9:
-       case 16:
-       case 23:
-       sDay = "Sunday";
-       break;
-	   
-       case 3:
-       case 10:
-       case 17:
-       case 24:
-       sDay = "Moonday";
-       break;
-	   
-       case 4:
-       case 11:
-       case 18:
-       case 25:
-       sDay = "Godsday";
-       break;
-	   
-       case 5:
-       case 12:
-       case 19:
-       case 26:
-       sDay = "Waterday";
-       break;
-	   
-       case 6:
-       case 13:
-       case 20:
-       case 27:
-       sDay = "Earthday";
-       break;
-	   
-       case 7:
-       case 14:
-       case 21:
-       case 28:
-       sDay = "Freeday";
-       break;	   	   	   	   	  	   	   
-       }
-   
-   switch (nMonth)
-       {
-       case 1:
-       sMonth = "Fireseek";
-       break;
-	   
-       case 2:
-       sMonth = "Readying";
-       break;
-	   
-       case 3:
-       sMonth = "Coldeven";
-       break;
-	   
-       case 4:
-       sMonth = "Planting";
-       break;
-	   
-       case 5:
-       sMonth = "Flocktime";
-       break;
-	   
-       case 6:
-       sMonth = "Wealsun";
-       break;
-	   
-       case 7:
-       sMonth = "Reaping";
-       break;
-	   
-       case 8:
-       sMonth = "Goodmonth";
-       break;
-	   
-       case 9:
-       sMonth = "Harvester";
-       break;
-	   
-       case 10:
-       sMonth = "Patchwall";
-       break;
-	   
-       case 11:
-       sMonth = "Ready'reat";
-       break;
-	   
-       case 12:
-       sMonth = "Sunsebb";
-       break;	   	   	   	   	   	   	   	   	   	  	   	   
-       }
-*/	   
-   //Gregorian(ish) Calendar   	  
-   switch (nDay)
-       {
-       case 1:
-       case 8:
-       case 15:
-       case 22:
-       sDay = "Sunday";
-       break;
-	   
-       case 2:
-       case 9:
-       case 16:
-       case 23:
-       sDay = "Monday";
-       break;
-	   
-       case 3:
-       case 10:
-       case 17:
-       case 24:
-       sDay = "Tuesday";
-       break;
-	   
-       case 4:
-       case 11:
-       case 18:
-       case 25:
-       sDay = "Wednesday";
-       break;
-	   
-       case 5:
-       case 12:
-       case 19:
-       case 26:
-       sDay = "Thursday";
-       break;
-	   
-       case 6:
-       case 13:
-       case 20:
-       case 27:
-       sDay = "Friday";
-       break;
-	   
-       case 7:
-       case 14:
-       case 21:
-       case 28:
-       sDay = "Saturday";
-       break;	   	   	   	   	  	   	   
-       }
-   
-   switch (nMonth)
-       {
-       case 1:
-       sMonth = "January";
-       break;
-	   
-       case 2:
-       sMonth = "February";
-       break;
-	   
-       case 3:
-       sMonth = "March";
-       break;
-	   
-       case 4:
-       sMonth = "April";
-       break;
-	   
-       case 5:
-       sMonth = "May";
-       break;
-	   
-       case 6:
-       sMonth = "June";
-       break;
-	   
-       case 7:
-       sMonth = "July";
-       break;
-	   
-       case 8:
-       sMonth = "August";
-       break;
-	   
-       case 9:
-       sMonth = "September";
-       break;
-	   
-       case 10:
-       sMonth = "October";
-       break;
-	   
-       case 11:
-       sMonth = "November";
-       break;
-	   
-       case 12:
-       sMonth = "December";
-       break;	   	   	   	   	   	   	   	   	   	  	   	   
-       }
-	   
-   if (nHour > 12)
-      {
+   if (nHour > 12) {
       nHour = nHour - 12;
       sAm = "pm";
-      }
-      else
-      {
+   }
+   else
       sAm = "am";
-      }	
      
-   sMsg = sDay + ", " + sMonth + " " + HSS_IntToLeadingZeroString(nDay) + 
-          ", " + IntToString(nYear) + "." + "   " + IntToString(nHour) +
+   sMsg = sDate + "." +
+	  "   " + IntToString(nHour) +
      	  " : " + HSS_IntToLeadingZeroString(nMinute) + " " + sAm;
 
 
    SendMessageToPC(oPC, HSS_PCTOOLS_COLOUR1 + "Date/Time is:  " + sMsg);
-
 }
 
 void HSS_PCTools_MakeSafeLocation(object oPC)
@@ -2051,652 +1801,311 @@ void HSS_PCTools_ToggleAFK(object oPC)
    ApplyEffectToObject(DURATION_TYPE_PERMANENT, eAFK, oPC);   
 }
 
+void _SimpleRoll(object oPC, int nDieNum, int nDieType, int nBroadcast)
+{
+	ACR_SimpleRoll(oPC, nDieNum, nDieType, TRUE, nBroadcast);
+}
+
 void HSS_PCToools_RollDie(object oPC)
 {
-   int nRollType = GetLocalInt(oPC, "HSS_PCTOOLS_ROLL_TYPE");
+    int nRollType,nDieNum,nDieType,nSaveType,nAbilityType,nSkillType,nBroadcast,nSkillIndex;
+	
+    nRollType = GetLocalInt(oPC, "HSS_PCTOOLS_ROLL_TYPE");
    
-   int nDieNum = GetLocalInt(oPC, "HSS_PCTOOLS_DIE_NUM");
-   int nDieType = GetLocalInt(oPC, "HSS_PCTOOLS_DIE_TYPE");
+    nDieNum = GetLocalInt(oPC, "HSS_PCTOOLS_DIE_NUM");
+    nDieType = GetLocalInt(oPC, "HSS_PCTOOLS_DIE_TYPE");
    
-   int nSaveType = GetLocalInt(oPC, "HSS_PCTOOLS_SAVE_TYPE");
-   int nAbilityType = GetLocalInt(oPC, "HSS_PCTOOLS_ABILITY_TYPE");
-   int nSkillType = GetLocalInt(oPC, "HSS_PCTOOLS_SKILL_TYPE");
+    nSaveType = GetLocalInt(oPC, "HSS_PCTOOLS_SAVE_TYPE");
+    nAbilityType = GetLocalInt(oPC, "HSS_PCTOOLS_ABILITY_TYPE");
+    nSkillType = GetLocalInt(oPC, "HSS_PCTOOLS_SKILL_TYPE");
    
-   int nBroadcast = GetLocalInt(oPC, "HSS_PCTOOLS_BROADCAST_TYPE");
+    nBroadcast = !GetLocalInt(oPC, "HSS_PCTOOLS_BROADCAST_TYPE");
 
-   int nVal1;
-   int nRoll;
-   int nRank;
-   int nSkillIndex = 0;
-   string sMsg;
-   string sSkill;
-   float fAnimDelay;
-   int bSkillCheck = FALSE;
+    nSkillIndex = 0;
 
-   switch (nRollType)
-       {
-	   //standard die
-	   case HSS_PC_TOOLS_DIE_STANDARD:
-       if (nDieNum == 0)
-          {
-          nDieNum = 1;
-          }       
-	   switch (nDieType)
-	       {
-		   case 2:
-		   nVal1 = d2(nDieNum);
-		   break;
-		   
-		   case 4:
-		   nVal1 = d4(nDieNum);
-		   break;
-		   
-		   case 6:
-		   nVal1 = d6(nDieNum);
-		   break;
-		   
-		   case 8:
-		   nVal1 = d8(nDieNum);
-		   break;
-		   
-		   case 10:
-		   nVal1 = d10(nDieNum);
-		   break;
-		   
-		   case 12:
-		   nVal1 = d12(nDieNum);
-		   break;
-		   
-		   case 20:
-		   nVal1 = d20(nDieNum);
-		   break;
-		   
-		   case 100:
-		   nVal1 = d100(nDieNum);
-		   break;		   		   		   		   		   		   		   
-		   }
-	   
-	   sMsg = HSS_PCTOOLS_COLOUR1 + "*Rolled " + HSS_PCTOOLS_COLOUR2 + 
-	   IntToString(nVal1) + HSS_PCTOOLS_COLOUR1 + " on " + 
-	   HSS_PCTOOLS_COLOUR2 + "("+ IntToString(nDieNum) + ")" + 
-	   HSS_PCTOOLS_COLOUR1 + " d" + IntToString(nDieType) + "*";
-	   
-       SetLocalGUIVariable(oPC, SCREEN_HSS_PC_TOOLS, HSS_PC_TOOLS_DIE_STANDARD, "TRUE");	   	    
-	   break;
-	   
-	   //saves
-	   case HSS_PC_TOOLS_DIE_SAVE:
-       switch (nSaveType)
-          {
-	      case SAVING_THROW_FORT:
-		  nRank = GetFortitudeSavingThrow(oPC);
-	      nRoll = d20();
-		  sSkill = HSS_PCTOOLS_COLOUR2 + "Fortitude" + HSS_PCTOOLS_COLOUR_END;
-	      break;
-	   
-	      case SAVING_THROW_REFLEX:
-		  nRank = GetReflexSavingThrow(oPC);
-	      nRoll = d20();
-		  sSkill = HSS_PCTOOLS_COLOUR2 + "Reflex" + HSS_PCTOOLS_COLOUR_END;
-	      break;
-	   
-	      case SAVING_THROW_WILL:
-		  nRank = GetWillSavingThrow(oPC);
-	      nRoll = d20();
-		  sSkill = HSS_PCTOOLS_COLOUR2 + "Will" + HSS_PCTOOLS_COLOUR_END;
-	      break;
-		  }
-		  
-	   sMsg = sSkill + HSS_PCTOOLS_COLOUR2 + " Save: " + HSS_PCTOOLS_COLOUR1 +
-	   "Rank: " + HSS_PCTOOLS_COLOUR2 + IntToString(nRank) +
-	   HSS_PCTOOLS_COLOUR1 + " + Roll: " + HSS_PCTOOLS_COLOUR2 +
-	   IntToString(nRoll) + HSS_PCTOOLS_COLOUR1 + " = " + HSS_PCTOOLS_COLOUR2 + 
-	   IntToString(nRank + nRoll) + HSS_PCTOOLS_COLOUR1 + ".";
-	   
-	   SetLocalGUIVariable(oPC, SCREEN_HSS_PC_TOOLS, HSS_PC_TOOLS_DIE_SAVE, "TRUE");		  	   
-	   break;
 
-	   //ability	   
-	   case HSS_PC_TOOLS_DIE_ABILITY:
-	   switch (nAbilityType)
-	       {
-		   //str
-		   case 1:
-		   nRank = GetAbilityModifier(ABILITY_STRENGTH, oPC);
-	       nRoll = d20();
-		   sSkill = HSS_PCTOOLS_COLOUR2 + "Strength" + HSS_PCTOOLS_COLOUR_END;		   
-		   break;
-		   
-		   //dex
-		   case 2:
-		   nRank = GetAbilityModifier(ABILITY_DEXTERITY, oPC);
-	       nRoll = d20();
-		   sSkill = HSS_PCTOOLS_COLOUR2 + "Dexterity" + HSS_PCTOOLS_COLOUR_END;		   		   
-		   break;
-		   
-		   //con
-		   case 3:
-		   nRank = GetAbilityModifier(ABILITY_CONSTITUTION, oPC);
-	       nRoll = d20();
-		   sSkill = HSS_PCTOOLS_COLOUR2 + "Constitution" + HSS_PCTOOLS_COLOUR_END;			   
-		   break;
-		   
-		   //int
-		   case 4:
-		   nRank = GetAbilityModifier(ABILITY_INTELLIGENCE, oPC);
-	       nRoll = d20();
-		   sSkill = HSS_PCTOOLS_COLOUR2 + "Intelligence" + HSS_PCTOOLS_COLOUR_END;		   
-		   break;
-		   
-		   //wis
-		   case 5:
-		   nRank = GetAbilityModifier(ABILITY_WISDOM, oPC);
-	       nRoll = d20();
-		   sSkill = HSS_PCTOOLS_COLOUR2 + "Wisdom" + HSS_PCTOOLS_COLOUR_END;		   
-		   break;
-		   
-		   //cha
-		   case 6:
-		   nRank = GetAbilityModifier(ABILITY_CHARISMA, oPC);
-	       nRoll = d20();
-		   sSkill = HSS_PCTOOLS_COLOUR2 + "Charisma" + HSS_PCTOOLS_COLOUR_END;		   
-		   break;		   		   		   		   		   
-		   }
+    switch (nRollType)  {
+	    
+	    // standard die
+	    case HSS_PC_TOOLS_DIE_STANDARD:
+	        if (nDieNum == 0)
+	            nDieNum = 1;
+	
+	        if (nDieType == 0)
+	            nDieType = 20;
+				
+	        if (nBroadcast)
+		        _SimpleRoll(oPC,nDieNum,nDieType,TRUE);
+		else {
+			HSS_PCTools_PlayCustomAnim(oPC, "gettable", FALSE, 2.0);
+			DelayCommand(1.0, PlaySound("it_generictiny"));
+			DelayCommand(1.5, HSS_PCTools_PlayCustomAnim(oPC, "getground", FALSE, 2.0));
+			DelayCommand(2.0, _SimpleRoll(oPC,nDieNum,nDieType,FALSE));
+		}
+	       
+	        SetLocalGUIVariable(oPC, SCREEN_HSS_PC_TOOLS, HSS_PC_TOOLS_DIE_STANDARD, "TRUE");               
+	        break;
+	       
+	    // saves
+	    case HSS_PC_TOOLS_DIE_SAVE:
+	       
+	        ACR_SaveCheck(nSaveType, oPC, 0, TRUE, nBroadcast);
+	    
+	        SetLocalGUIVariable(oPC, SCREEN_HSS_PC_TOOLS, HSS_PC_TOOLS_DIE_SAVE, "TRUE");                 
+	        break;
+	
+	    // ability       
+	    case HSS_PC_TOOLS_DIE_ABILITY:
+	
+	        ACR_StatCheck(nAbilityType-1, oPC, 0, TRUE, nBroadcast);
+	       
+	        SetLocalGUIVariable(oPC, SCREEN_HSS_PC_TOOLS, HSS_PC_TOOLS_DIE_ABILITY, "TRUE");       
+	        break;
+	       
+	    // skill
+	    case HSS_PC_TOOLS_DIE_SKILL:
+	        switch (nSkillType) {
+	            // appraise
+	            case 1:
+	                nSkillIndex = SKILL_APPRAISE;
+	                break;
+	            // balance
+	            case 2:
+	                nSkillIndex = SKILL_BALANCE;
+	                break;              
+	            // bluff
+	            case 3:
+	                nSkillIndex = SKILL_BLUFF;
+	                break;
+	            // climb
+	            case 4:
+	                nSkillIndex = SKILL_CLIMB;
+	                break;
+	            // concentration
+	            case 5:
+	                nSkillIndex = SKILL_CONCENTRATION;
+	                break;
+	            // craft alchemy
+	            case 6:
+	                nSkillIndex = SKILL_CRAFT__ALCHEMY;
+	                break;
+	            // craft armour
+	            case 7:
+	                nSkillIndex = SKILL_CRAFT_ARMORSMITHING;
+	                break;
+	            // craft bows
+	            case 8:
+	                nSkillIndex = SKILL_CRAFT_BOWMAKING;
+	                break;
+	            // craft weapon
+	            case 9:
+	                nSkillIndex = SKILL_CRAFT_WEAPONSMITHING;
+	                break;
+	            // decipher script
+	            case 10:
+	                nSkillIndex = SKILL_DECIPHER_SCRIPT;
+	                break;
+	            // diplomacy
+	            case 11:
+	                nSkillIndex = SKILL_DIPLOMACY;
+	                break;
+	            // disable trap
+	            case 12:
+	                nSkillIndex = SKILL_DISABLE_TRAP;
+	                break;
+	            // disguise
+	            case 13:
+	                nSkillIndex = SKILL_DISGUISE;
+	                break;
+	            // escape artist
+	            case 14:
+	                nSkillIndex = SKILL_ESCAPE_ARTIST;
+	                break;
+	            // forgery
+	            case 15:
+	                nSkillIndex = SKILL_FORGERY;
+	                break;
+	            // gather information
+	            case 16:
+	                nSkillIndex = SKILL_GATHER_INFORMATION;
+	                break;
+	            // handle animal
+	            case 17:
+	                nSkillIndex = SKILL_HANDLE_ANIMAL;
+	                break;
+	            // heal
+	            case 18:
+	                nSkillIndex = SKILL_HEAL;
+	                break;
+	            // hide
+	            case 19:
+	                nSkillIndex = SKILL_HIDE;
+	                break;
+	            // intimidate
+	            case 20:
+	                nSkillIndex = SKILL_INTIMIDATE;
+	                break;
+	            // jump
+	            case 21:
+	                nSkillIndex = SKILL_JUMP;
+	                break;
+	            // knowledge (arcana)
+	            case 22:
+	                nSkillIndex = SKILL_KNOWLEDGE_ARCANA;
+	                break;
+	            // knowledge (architecture/engineering)
+	            case 23:
+	                nSkillIndex = SKILL_KNOWLEDGE_ENGINEERING;
+	                break;
+	            // knowledge (dungeoneering)
+	            case 24:
+	                nSkillIndex = SKILL_KNOWLEDGE_DUNGEONEERING;
+	                break;
+	            // knowledge (geography)
+	            case 25:
+	                nSkillIndex = SKILL_KNOWLEDGE_GEOGRAPHY;
+	                break;        
+	            // knowledge (history)
+	            case 26:
+	                nSkillIndex = SKILL_KNOWLEDGE_HISTORY;
+	                break;        
+	            // knowledge (local)
+	            case 27:
+	                nSkillIndex = SKILL_KNOWLEDGE_LOCAL;
+	                break;                    
+	            // knowledge (nature)
+	            case 28:
+	                nSkillIndex = SKILL_KNOWLEDGE_NATURE;
+	                break;
+	            // knowledge (nobility)
+	            case 29:
+	                nSkillIndex = SKILL_KNOWLEDGE_NOBILITY;
+	                break;
+	            // knowledge (religion)
+	            case 30:
+	                nSkillIndex = SKILL_KNOWLEDGE_RELIGION;
+	                break;
+	            // knowledge (the planes)
+	            case 31:
+	                nSkillIndex = SKILL_KNOWLEDGE_THE_PLANES;
+	                break;                    
+	            // listen
+	            case 32:
+	                nSkillIndex = SKILL_LISTEN;
+	                break;
+	            // move silently
+	            case 33:
+	                nSkillIndex = SKILL_MOVE_SILENTLY;
+	                break;
+	            // open lock
+	            case 34:
+	                nSkillIndex = SKILL_OPEN_LOCK;
+	                break;
+	            // parry
+	            case 35:
+	                nSkillIndex = SKILL_PARRY;
+	                break;
+	            // perform (acting)
+	            case 36:
+	                nSkillIndex = SKILL_PERFORM_ACT;
+	                break;
+	            // perform (comedy)
+	            case 37:
+	                nSkillIndex = SKILL_PERFORM_COMEDY;
+	                break;
+	            // perform (dance)
+	            case 38:
+	                nSkillIndex = SKILL_PERFORM_DANCE;
+	                break;
+	            // perform (keyboards)
+	            case 39:
+	                nSkillIndex = SKILL_PERFORM_KEYBOARD;
+	                break;    
+	            // perform (oratory)
+	            case 40:
+	                nSkillIndex = SKILL_PERFORM_ORATORY;
+	                break;    
+	            // perform (percussion)
+	            case 41:
+	                nSkillIndex = SKILL_PERFORM_PERCUSSION;
+	                break;    
+	            // perform (strings)
+	            case 42:
+	                nSkillIndex = SKILL_PERFORM_STRING_INSTRUMENTS;
+	                break;    
+	            // perform (wind instruments)
+	            case 43:
+	                nSkillIndex = SKILL_PERFORM_WIND_INSTRUMENTS;
+	                break;    
+	            // perform (sing)
+	            case 44:
+	                nSkillIndex = SKILL_PERFORM_SING;
+	                break;    
+	            // profession
+	            case 45:
+	                nSkillIndex = SKILL_PROFESSION;
+	                break;                        
+	            // ride
+	            case 46:
+	                nSkillIndex = SKILL_RIDE;
+	                break;    
+	            // search       
+	            case 47:
+	                nSkillIndex = SKILL_SEARCH;
+	                break;    
+	            // sense motive
+	            case 48:
+	                nSkillIndex = SKILL_SENSE_MOTIVE;
+	                break;
+	            // sleight of hand
+	            case 49:
+	                nSkillIndex = SKILL_SLEIGHT_OF_HAND;
+	                break;
+	            // speak language
+	            case 50:
+	                nSkillIndex = SKILL_SPEAK_LANGUAGE;
+	                break;
+	            // spellcraft
+	            case 51:
+	                nSkillIndex = SKILL_SPELLCRAFT;
+	                break;
+	            // spot
+	            case 52:
+	                nSkillIndex = SKILL_SPOT;
+	                break;
+	            // survival
+	            case 53:
+	                nSkillIndex = SKILL_SURVIVAL;
+	                break;
+	            // swim
+	            case 54:
+	                nSkillIndex = SKILL_SWIM;
+	                break;
+	            // tumble
+	            case 55:
+	                nSkillIndex = SKILL_TUMBLE;
+	                break;
+	            // umd
+	            case 56:
+	                nSkillIndex = SKILL_USE_MAGIC_DEVICE;
+	                break;
+	            // use rope
+	            case 57:
+	                nSkillIndex = SKILL_USE_ROPE;
+	                break;                                                                                              
+	        }
+	      
+	        ACR_SkillCheck(nSkillIndex, oPC, 0, TRUE, nBroadcast);
+	                                                              
+	        SetLocalGUIVariable(oPC, SCREEN_HSS_PC_TOOLS, HSS_PC_TOOLS_DIE_SKILL, "TRUE");       
+	        break;                     
+	    default:
+	        SendMessageToPC(oPC,HSS_PCTOOLS_COLOUR1 + "Select a die roll type before rolling.");
+    }
+		
 
-	   sMsg = sSkill + HSS_PCTOOLS_COLOUR2 + " Check: " + HSS_PCTOOLS_COLOUR1 +
-	   "Bonus: " + HSS_PCTOOLS_COLOUR2 + IntToString(nRank) +
-	   HSS_PCTOOLS_COLOUR1 + " + Roll: " + HSS_PCTOOLS_COLOUR2 +
-	   IntToString(nRoll) + HSS_PCTOOLS_COLOUR1 + " = " + HSS_PCTOOLS_COLOUR2 + 
-	   IntToString(nRank + nRoll) + HSS_PCTOOLS_COLOUR1 + ".";
-	   		   	   
-       SetLocalGUIVariable(oPC, SCREEN_HSS_PC_TOOLS, HSS_PC_TOOLS_DIE_ABILITY, "TRUE");	   
-	   break;
-	   
-	   //skill
-	   case HSS_PC_TOOLS_DIE_SKILL:
-       switch (nSkillType)
-	       {
-		    //appraise
-	        case 1:
-		    nRank = GetSkillRank(SKILL_APPRAISE, oPC);
-			nSkillIndex = 20;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Appraise" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        // Balance
-	        case 2:
-		    nRank = GetSkillRank(SKILL_BALANCE, oPC);
-			nSkillIndex = 30;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Balance" + HSS_PCTOOLS_COLOUR_END;
-	        break;			  
-	        //bluff
-	        case 3:
-		    nRank = GetSkillRank(SKILL_BLUFF, oPC);
-			nSkillIndex = 23;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Bluff" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        // Climb
-	        case 4:
-		    nRank = GetSkillRank(SKILL_CLIMB, oPC);
-			nSkillIndex = 31;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Climb" + HSS_PCTOOLS_COLOUR_END;
-	        break;			  
-	        //concentration
-	        case 5:
-		    nRank = GetSkillRank(SKILL_CONCENTRATION, oPC);
-			nSkillIndex = 1;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Concentration" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //craft alchemy
-	        case 6:
-		    nRank = GetSkillRank(SKILL_CRAFT__ALCHEMY, oPC);
-			nSkillIndex = 64;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Craft Alchemy" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //craft armour
-	        case 7:
-		    nRank = GetSkillRank(SKILL_CRAFT_ARMORSMITHING, oPC);
-			nSkillIndex = 65;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Craft Armour" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //craft bows
-	        case 8:
-		    nRank = GetSkillRank(SKILL_CRAFT_BOWMAKING, oPC);
-			nSkillIndex = 66;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Craft Bows" + HSS_PCTOOLS_COLOUR_END;
-	        break;			
-	        //craft weapon
-	        case 9:
-		    nRank = GetSkillRank(SKILL_CRAFT_WEAPONSMITHING, oPC);
-			nSkillIndex = 67;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Craft Weapon" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //decipher script
-	        case 10:
-		    nRank = GetSkillRank(SKILL_DECIPHER_SCRIPT, oPC);
-			nSkillIndex = 32;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_DECIPHER_SCRIPT, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Decipher Script" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //diplomacy
-	        case 11:
-		    nRank = GetSkillRank(SKILL_DIPLOMACY, oPC);
-			nSkillIndex = 12;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Diplomacy" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //disable trap
-	        case 12:
-		    nRank = GetSkillRank(SKILL_DISABLE_TRAP, oPC);
-			nSkillIndex = 2;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_DISABLE_TRAP, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Disable Device" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //disguise
-	        case 13:
-		    nRank = GetSkillRank(SKILL_DISGUISE, oPC);
-			nSkillIndex = 34;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Disguise" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //escape artist
-	        case 14:
-		    nRank = GetSkillRank(SKILL_ESCAPE_ARTIST, oPC);
-			nSkillIndex = 35;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Escape Artist" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //forgery
-	        case 15:
-		    nRank = GetSkillRank(SKILL_FORGERY, oPC);
-			nSkillIndex = 36;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Forgery" + HSS_PCTOOLS_COLOUR_END;
-	        break;		    
-	        //Gather Information
-	        case 16:
-		    nRank = GetSkillRank(SKILL_GATHER_INFORMATION, oPC);
-			nSkillIndex = 37;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Gather Info" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //handle animal
-	        case 17:
-		    nRank = GetSkillRank(SKILL_HANDLE_ANIMAL, oPC);
-			nSkillIndex = 38;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_HANDLE_ANIMAL, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Handle Animal" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-			//heal
-	        case 18:
-		    nRank = GetSkillRank(SKILL_HEAL, oPC);
-			nSkillIndex = 4;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Heal" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //hide
-	        case 19:
-		    nRank = GetSkillRank(SKILL_HIDE, oPC);
-			nSkillIndex = 5;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Hide" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //intimidate
-	        case 20:
-		    nRank = GetSkillRank(SKILL_INTIMIDATE, oPC);
-			nSkillIndex = 24;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Intimidate" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //jump
-	        case 21:
-		    nRank = GetSkillRank(SKILL_JUMP, oPC);
-			nSkillIndex = 39;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Jump" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //Knowledge (Arcana)
-	        case 22:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_ARCANA, oPC);
-			nSkillIndex = 40;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_ARCANA, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: Arcana" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //Knowledge (Architecture/Engineering)
-	        case 23:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_ENGINEERING, oPC);
-			nSkillIndex = 58;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_ENGINEERING, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: Arch/Engin" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //Knowledge (Dungeoneering)
-	        case 24:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_DUNGEONEERING, oPC);
-			nSkillIndex = 33;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_DUNGEONEERING, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: Dungeon" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //Knowledge (Geography)
-	        case 25:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_GEOGRAPHY, oPC);
-			nSkillIndex = 55;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_GEOGRAPHY, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: Geography" + HSS_PCTOOLS_COLOUR_END;
-	        break;			
-	        //Knowledge (History)
-	        case 26:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_HISTORY, oPC);
-			nSkillIndex = 41;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_HISTORY, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: History" + HSS_PCTOOLS_COLOUR_END;
-	        break;			
-	        //Knowledge (Local)
-	        case 27:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_LOCAL, oPC);
-			nSkillIndex = 59;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_LOCAL, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: Local" + HSS_PCTOOLS_COLOUR_END;
-	        break;			
-	        //Knowledge (Nature)
-	        case 28:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_NATURE, oPC);
-			nSkillIndex = 42;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_NATURE, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: Nature" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //Knowledge (Nobility)
-	        case 29:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_NOBILITY, oPC);
-			nSkillIndex = 56;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_NOBILITY, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: Nobility" + HSS_PCTOOLS_COLOUR_END;
-	        break;			
-	        //Knowledge (Religion)
-	        case 30:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_RELIGION, oPC);
-			nSkillIndex = 43;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_RELIGION, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: Religion" + HSS_PCTOOLS_COLOUR_END;
-	        break;			
-	        //Knowledge (The Planes)
-	        case 31:
-		    nRank = GetSkillRank(SKILL_KNOWLEDGE_THE_PLANES, oPC);
-			nSkillIndex = 44;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_KNOWLEDGE_THE_PLANES, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Know: The Planes" + HSS_PCTOOLS_COLOUR_END;
-	        break;								
-	        //listen
-	        case 32:
-		    nRank = GetSkillRank(SKILL_LISTEN, oPC);
-			nSkillIndex = 6;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Listen" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //move silently
-	        case 33:
-		    nRank = GetSkillRank(SKILL_MOVE_SILENTLY, oPC);
-			nSkillIndex = 8;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Move Silently" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //open lock
-	        case 34:
-		    nRank = GetSkillRank(SKILL_OPEN_LOCK, oPC);
-			nSkillIndex = 9;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_OPEN_LOCK, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Open Lock" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //parry
-	        case 35:
-		    nRank = GetSkillRank(SKILL_PARRY, oPC);
-			nSkillIndex = 10;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Parry" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //perform (acting)
-	        case 36:
-		    nRank = GetSkillRank(SKILL_PERFORM_ACT, oPC);
-			nSkillIndex = 45;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Perform (act)" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //perform (comedy)
-	        case 37:
-		    nRank = GetSkillRank(SKILL_PERFORM_COMEDY, oPC);
-			nSkillIndex = 63;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Perform (comedy)" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //perform (dance)
-	        case 38:
-		    nRank = GetSkillRank(SKILL_PERFORM_DANCE, oPC);
-			nSkillIndex = 46;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Perform (dance)" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //perform (keyboards)
-	        case 39:
-		    nRank = GetSkillRank(SKILL_PERFORM_KEYBOARD, oPC);
-			nSkillIndex = 61;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Perform (keyboard)" + HSS_PCTOOLS_COLOUR_END;
-	        break;			
-		    //perform (oratory)
-	        case 40:
-		    nRank = GetSkillRank(SKILL_PERFORM_ORATORY, oPC);
-			nSkillIndex = 47;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Perform (oratory)" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //perform (percussion)
-	        case 41:
-		    nRank = GetSkillRank(SKILL_PERFORM_PERCUSSION, oPC);
-			nSkillIndex = 60;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Perform (drums)" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //perform (strings)
-	        case 42:
-		    nRank = GetSkillRank(SKILL_PERFORM_STRING_INSTRUMENTS, oPC);
-			nSkillIndex = 48;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Perform (strings)" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //perform (wind instruments)
-	        case 43:
-		    nRank = GetSkillRank(SKILL_PERFORM_WIND_INSTRUMENTS, oPC);
-			nSkillIndex = 62;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Perform (Wind Inst.)" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //perform (sing)
-	        case 44:
-		    nRank = GetSkillRank(SKILL_PERFORM_SING, oPC);
-			nSkillIndex = 49;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Perform (sing)" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //profession
-	        case 45:
-		    nRank = GetSkillRank(SKILL_PROFESSION, oPC);
-			nSkillIndex = 50;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_PROFESSION, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Profession" + HSS_PCTOOLS_COLOUR_END;
-	        break;						
-		    //ride
-	        case 46:
-		    nRank = GetSkillRank(SKILL_RIDE, oPC);
-			nSkillIndex = 28;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Ride" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-			//search	   
-	        case 47:
-		    nRank = GetSkillRank(SKILL_SEARCH, oPC);
-			nSkillIndex = 14;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Search" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //sense motive
-	        case 48:
-		    nRank = GetSkillRank(SKILL_SENSE_MOTIVE, oPC);
-			nSkillIndex = 51;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Sense Motive" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //sleight of hand
-	        case 49:
-		    nRank = GetSkillRank(SKILL_SLEIGHT_OF_HAND, oPC);
-			nSkillIndex = 13;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_SLEIGHT_OF_HAND, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Sleight of Hand" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-		    //speak language
-	        case 50:
-		    nRank = GetSkillRank(SKILL_SPEAK_LANGUAGE, oPC);
-			nSkillIndex = 52;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_SPEAK_LANGUAGE, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Speak Language" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //spellcraft
-	        case 51:
-		    nRank = GetSkillRank(SKILL_SPELLCRAFT, oPC);
-			nSkillIndex = 16;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_SPELLCRAFT, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Spellcraft" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //spot
-	        case 52:
-		    nRank = GetSkillRank(SKILL_SPOT, oPC);
-			nSkillIndex = 17;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Spot" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //survival
-	        case 53:
-		    nRank = GetSkillRank(SKILL_SURVIVAL, oPC);
-			nSkillIndex = 29;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Survival" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //swim
-	        case 54:
-		    nRank = GetSkillRank(SKILL_SWIM, oPC);
-			nSkillIndex = 53;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Swim" + HSS_PCTOOLS_COLOUR_END;
-	        break;	
-		    //tumble
-	        case 55:
-		    nRank = GetSkillRank(SKILL_TUMBLE, oPC);
-			nSkillIndex = 21;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_TUMBLE, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Tumble" + HSS_PCTOOLS_COLOUR_END;
-	        break;
-	        //UMD
-	        case 56:
-		    nRank = GetSkillRank(SKILL_USE_MAGIC_DEVICE, oPC);
-			nSkillIndex = 19;
-	        nRoll = d20();
-			if (GetSkillRank(SKILL_USE_MAGIC_DEVICE, oPC, TRUE) <= 0) { nRoll = -1; }
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Use Magic Device" + HSS_PCTOOLS_COLOUR_END;
-	        break;		  
-	        // Use Rope
-	        case 57:
-		    nRank = GetSkillRank(SKILL_USE_ROPE, oPC);
-			nSkillIndex = 54;
-	        nRoll = d20();
-		    sSkill = HSS_PCTOOLS_COLOUR2 + "Use Rope" + HSS_PCTOOLS_COLOUR_END;
-	        break;			  			  		  	   	   	 		  	   	   	   	   	   	   	   
-	      }
-	   bSkillCheck = TRUE;
-	   // Added feedback for unskilled checks
-	   if (nRoll < 0) {
-	   	   // nRoll set to -1 if the user is untrained.
-	   	   sMsg = HSS_PCTOOLS_COLOUR2+"FAILURE: Use of "+sSkill+" requires training.";
-	   } else {
-	   	   // normal result 
-		   /*
-	       sMsg = sSkill + HSS_PCTOOLS_COLOUR2 + " Check: " + HSS_PCTOOLS_COLOUR1 +
-	         "Rank: " + HSS_PCTOOLS_COLOUR2 + IntToString(nRank) +
-	         HSS_PCTOOLS_COLOUR1 + " + Roll: " + HSS_PCTOOLS_COLOUR2 +
-	         IntToString(nRoll) + HSS_PCTOOLS_COLOUR1 + " = " + HSS_PCTOOLS_COLOUR2 + 
-	         IntToString(nRank + nRoll) + HSS_PCTOOLS_COLOUR1 + ".";
-		   */
-		   if (GetLocalInt(oPC, "HSS_PCTOOLS_BROADCAST_TYPE") == 1) {
-		      SendMessageToPC(oPC, "<color=#EFD4AC>ACR Skill check: </c>"+sSkill);
-		   	  ACR_SkillCheck(nSkillIndex, oPC, 0, TRUE, FALSE);
-		   } else {
-		   	  SendChatMessage(oPC, oPC, CHAT_MODE_TALK, "<color=#EFD4AC>ACR Skill check: </c>"+sSkill, FALSE);
-			  ACR_SkillCheck(nSkillIndex, oPC, 0, TRUE, TRUE);
-		   }
-		   
-		   //SendMessageToAllDMs("<color=#EFD4AC>"+GetName(oPC)+" ACR Skill check: </c>"+sSkill);
-	   }		   		   		   		   		   		   
-	   SetLocalGUIVariable(oPC, SCREEN_HSS_PC_TOOLS, HSS_PC_TOOLS_DIE_SKILL, "TRUE");	   
-	   break;	   	   	   
-	   }
-
-	   if (sMsg == "") 
-	      {
-		  if (!bSkillCheck) {
-		  	sMsg = HSS_PCTOOLS_COLOUR1 + "Select a die roll type before rolling.";
-		  }
-          nBroadcast = 1;
-		  }
-
-	   if (!nDieType && nRollType == HSS_PC_TOOLS_DIE_STANDARD)
-		  {
-		  sMsg = HSS_PCTOOLS_COLOUR1 + "Standard die rolls require a die type.";
-		  nBroadcast = 1;
-		  }
-			 		  		  
-	   if (nRollType == HSS_PC_TOOLS_DIE_STANDARD && !nBroadcast)
-	      {
-	      HSS_PCTools_PlayCustomAnim(oPC, "gettable", FALSE, 2.0);
-          DelayCommand(1.0, PlaySound("it_generictiny"));
-		  DelayCommand(1.5, HSS_PCTools_PlayCustomAnim(oPC, "getground", FALSE, 2.0));
-		  fAnimDelay = 2.0;
-		  }		  
-	   
-	   if (nBroadcast)
-	      {
-		  DelayCommand(fAnimDelay, SendMessageToPC(oPC, sMsg));
-		  }
-		  else
-		  {
-		  DelayCommand(fAnimDelay, SpeakString(sMsg));
-		  }
-
-       HSS_PCTools_CleanPCLocals(oPC, FALSE);		  		  
-       DelayCommand(0.2, HSS_PCTools_DeleteGUIDieRollType(oPC));   
+    HSS_PCTools_CleanPCLocals(oPC, FALSE);                    
+    DelayCommand(0.2, HSS_PCTools_DeleteGUIDieRollType(oPC));   
 }
 
 void HSS_PCTools_SetGUIDieRollType(object oPC, int nType = HSS_PC_TOOLS_DIE_STANDARD)
@@ -2900,7 +2309,7 @@ void HSS_PCTools_Remove(object oPC, int nObject)
 
    if (sTag == "HSS_PCTOOLS_TENT")
       {
-	  sMsg = HSS_PCTOOLS_COLOUR1 + "*Packs Up Bedroll*";
+	  sMsg = HSS_PCTOOLS_COLOUR1 + "*Packs Up Tent*";
 	  sAnim = "disablefront";
       DelayCommand(6.0, HSS_PCTools_DestroyAndDecrement(oMod, oTarget, sPCID));
 	  }
@@ -2979,10 +2388,10 @@ void HSS_PCTools_CustomButton(object oPC, int nButton, float fX = 0.0, float fY 
 		   
 		   //custom button 5
 		   case 5:
-           //  Activate Subdual
-		       ACR_ToggleNLDMode(oPC);
-			   
-     	   break;
+			//  Activate Subdual
+			ACR_ToggleNLDMode(oPC);
+		   
+			break;
 		   
 		   //custom button 6
 		   case 6:
@@ -3004,7 +2413,7 @@ void HSS_PCTools_CustomButton(object oPC, int nButton, float fX = 0.0, float fY 
 		   
 		   //custom button 9
 		   case 9:
-           		//your custom button code goes here
+		   		// Activate Shield VFX
 		  		ACR_HSS_ToggleShield(oPC);		   
 		   		break;
 

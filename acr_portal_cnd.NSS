@@ -28,6 +28,9 @@
 //!
 int StartingConditional(string sFunction) {
 
+    //interim fix, -AL
+	int ACR_SERVER_ID = 9;
+
 	object oPC = GetPCSpeaker();
 	int nDestID = GetLocalInt(oPC, "ACR_PORTAL_DEST_SERVER");
 	string sServerID = IntToString(ACR_SERVER_ID);
