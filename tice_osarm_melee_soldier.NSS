@@ -66,8 +66,8 @@ void main()
 		case 3:sWeaponType="nw_wblfl001";break;//flail
 		case 4:sWeaponType="nw_wblms001";break;//morningstar
 		case 5:sWeaponType="nw_wblhw001";break;//warhammer
-		case 6:sWeaponType="abr_it_wpn_scimitar100";break;//scimitar
-		case 7:sWeaponType="abr_it_wpn_scimitar102";break;//scimitar
+		case 6:sWeaponType="nw_wswsc001";break;//scimitar
+		case 7:sWeaponType="nw_waxbt001";break;//battleaxe
 		case 8:sWeaponType="nw_wswls001";break;//longsword
 		}
 	object oShield=CreateItemOnObject(sShieldType);

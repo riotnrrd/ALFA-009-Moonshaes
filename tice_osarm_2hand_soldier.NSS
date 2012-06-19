@@ -54,13 +54,13 @@ void main()
 	switch (D1)
 		{
 		case 1:sWeaponType="nw_waxgr001";break;//greataxe
-		case 2:sWeaponType="abr_it_wpn_warmace101";break;//warmace
-		case 3:sWeaponType="abr_it_wpn_falchion102";break;//falchion
+		case 2:sWeaponType="nw_wdbma001";break;//warmace
+		case 3:sWeaponType="n2_wswfl001";break;//falchion
 		case 4:sWeaponType="nw_wswgs001";break;//greatsword
 		case 5:sWeaponType="nw_wswgs001";break;//greatsword
-		case 6:sWeaponType="009_it_wpn_halberd_04";break;//halberd
-		case 7:sWeaponType="009_it_wpn_halberd100";break;//halberd
-		case 8:sWeaponType="009_it_wpn_halberd102";break;//halberd
+		case 6:sWeaponType="nw_wplhb001";break;//halberd
+		case 7:sWeaponType="nw_wplhb001";break;//halberd
+		case 8:sWeaponType="nw_wplhb001";break;//halberd
 		}
 	object oWeapon=CreateItemOnObject(sWeaponType);
 	AssignCommand(OBJECT_SELF,ActionEquipItem(oWeapon,INVENTORY_SLOT_RIGHTHAND));
