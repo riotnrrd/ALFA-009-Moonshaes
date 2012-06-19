@@ -1,0 +1,132 @@
+NDB V1.0
+0000002 0000001 0000032 0000019 0000022
+n00 ginc_debug
+N01 010_corpse
+s 03 vector
+sf f x
+sf f y
+sf f z
+f ffffffff ffffffff 000 i POST_COLOR_RED
+f ffffffff ffffffff 000 i POST_COLOR_GREEN
+f ffffffff ffffffff 000 i POST_COLOR_BLUE
+f ffffffff ffffffff 000 i POST_COLOR_WHITE
+f ffffffff ffffffff 000 i POST_COLOR_BLACK
+f ffffffff ffffffff 000 i POST_COLOR_OFFSET
+f ffffffff ffffffff 000 i POST_COLOR_DEBUG
+f ffffffff ffffffff 000 i POST_COLOR_ERROR
+f ffffffff ffffffff 000 i LINE_SIZE
+f ffffffff ffffffff 000 i PRETTY_LINE_WRAP
+f ffffffff ffffffff 000 i PRETTY_X_OFFSET
+f ffffffff ffffffff 000 i PRETTY_Y_OFFSET
+f ffffffff ffffffff 000 f PRETTY_DURATION
+f ffffffff ffffffff 000 f DURATION_NORMAL
+f ffffffff ffffffff 000 f DURATION_LONG
+f ffffffff ffffffff 001 o GetFirstPCInFaction
+fp o
+f ffffffff ffffffff 006 v Message
+fp s
+fp i
+fp i
+fp f
+fp i
+fp i
+f ffffffff ffffffff 005 v ErrorMessage
+fp s
+fp i
+fp i
+fp f
+fp i
+f ffffffff ffffffff 005 v DebugMessage
+fp s
+fp i
+fp i
+fp f
+fp i
+f ffffffff ffffffff 002 v OldFunctionMessage
+fp s
+fp s
+f ffffffff ffffffff 005 v MessageLine
+fp i
+fp s
+fp i
+fp f
+fp i
+f ffffffff ffffffff 005 v DebugMessageLine
+fp i
+fp s
+fp i
+fp f
+fp i
+f 0000012e 0000024e 004 v PrettyPostString
+fp o
+fp s
+fp f
+fp i
+f 000000df 0000012e 003 v PrettyDebug
+fp s
+fp f
+fp i
+f ffffffff ffffffff 003 v PrettyError
+fp s
+fp f
+fp i
+f ffffffff ffffffff 003 v PrettyMessage
+fp s
+fp f
+fp i
+f 0000024e 0000036a 006 v Backdrop
+fp o
+fp s
+fp i
+fp i
+fp f
+fp i
+f ffffffff ffffffff 001 v SendMessageToAllPlayersByStrRef
+fp i
+f ffffffff ffffffff 002 v SendMessageToPartyByStrRef
+fp o
+fp i
+f 0000004e 000000df 000 v main
+f 0000000d 00000015 000 v #loader
+f 00000015 0000004e 000 v #globals
+v 00000017 ffffffff 00000000 s PRETTY_LINE_COUNT_VAR
+v 00000050 000000d7 00000000 o oUser
+v 000000df 00000126 00000000 i nColor
+v 000000df 00000126 00000004 f fDuration
+v 000000df 00000126 00000008 s sMessage
+v 000000e1 00000120 0000000c o oPC
+v 0000012e 00000246 00000000 i nColor
+v 0000012e 00000246 00000004 f fDuration
+v 0000012e 00000246 00000008 s sMessage
+v 0000012e 00000246 0000000c o oTarget
+v 00000130 00000240 00000010 i nX
+v 00000146 00000240 00000014 i nLineOffset
+v 00000163 00000240 00000018 i nY
+v 0000024e 00000362 00000000 i nColor
+v 0000024e 00000362 00000004 f fDuration
+v 0000024e 00000362 00000008 i nY
+v 0000024e 00000362 0000000c i nX
+v 0000024e 00000362 00000010 s sMessage
+v 0000024e 00000362 00000014 o oTarget
+l00 0000048 00000015 0000003c
+l01 0000012 0000004e 00000063
+l01 0000014 00000063 000000a4
+l01 0000017 000000a4 000000d7
+l01 0000020 000000dd 000000df
+l00 0000156 000000df 000000fa
+l00 0000157 000000fa 00000120
+l00 0000158 00000126 0000012e
+l00 0000141 0000012e 00000144
+l00 0000142 00000144 00000161
+l00 0000143 00000161 00000189
+l00 0000145 00000189 000001bd
+l00 0000146 000001bd 000001f2
+l00 0000147 000001f2 000001ff
+l00 0000149 000001ff 00000225
+l00 0000150 00000225 00000240
+l00 0000151 00000246 0000024e
+l00 0000177 0000024e 00000293
+l00 0000178 00000293 000002d8
+l00 0000179 000002d8 0000031d
+l00 0000180 0000031d 00000362
+l00 0000181 00000362 0000036a
