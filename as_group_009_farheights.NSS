@@ -60,6 +60,6 @@ void main() {
 	int nRoll = d100();
 	int i;
 
-	if (nRoll <= 50) ACR_SpawnGroup("orc_gang"); 
+	if (nRoll <= 50) ACR_SpawnGroup("orc_gang");
 	else ACR_SpawnGroup("temperate_clear");
 }

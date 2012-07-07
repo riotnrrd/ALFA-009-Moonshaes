@@ -54,12 +54,11 @@ void main();
 
 // Created by Riotnrrd for ALFA 4/2012
 void main() {
-// Goblin Raiders: 1d3+2 goblins, 1 2nd level goblin fighter, each with a worg
-	int nGoblins = d3() + 2;
+// Goblin Raiders: 1d3+2 worg riders and a 2nd level fighter worg rider
+	int nRiders = d3() + 2;
 	int i;
 	
-	for (i = 0; i < nGoblins; i++) ACR_SpawnObject("abr_cr_hu_goblin", OBJECT_TYPE_CREATURE);
-	ACR_SpawnObject("abr_cr_hu_goblin_ftr_2", OBJECT_TYPE_CREATURE);
-	for (i = 0; i < nGoblins+1; i++) ACR_SpawnObject("abr_cr_mb_worg", OBJECT_TYPE_CREATURE);
+	for (i = 0; i < nRiders; i++) ACR_SpawnObject("abr_cr_hu_goblin_worgrider", OBJECT_TYPE_CREATURE);
+	ACR_SpawnObject("abr_cr_hu_goblin_worgrider_ftr_2", OBJECT_TYPE_CREATURE);
 	
 }
