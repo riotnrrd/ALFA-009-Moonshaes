@@ -59,11 +59,11 @@ void main() {
 	int nLeaders = d2();
 	int i;
 	
-	for (i = 0; i < nFighters; i++) SetFirstName(ACR_SpawnObject("abr_cr_npc_ftr_1", OBJECT_TYPE_CREATURE), "Cantrev Corporal");
+	for (i = 0; i < nFighters; i++) SetFirstName(ACR_SpawnObject("abr_cr_npc_ftr_1", OBJECT_TYPE_CREATURE), "Militia Corporal");
 	for (i = 0; i < nLeaders; i++) {
 		int nType = d100();
-		if (nType < 33) SetFirstName(ACR_SpawnObject("abr_cr_npc_ftr_3", OBJECT_TYPE_CREATURE), "Cantrev Sergeant");
-		else if (nType < 66) SetFirstName(ACR_SpawnObject("abr_cr_npc_clr_3", OBJECT_TYPE_CREATURE), "Cantrev Sergeant");
-		else SetFirstName(ACR_SpawnObject("abr_cr_npc_wiz_3", OBJECT_TYPE_CREATURE), "Cantrev Sergeant");
+		if (nType < 33) SetFirstName(ACR_SpawnObject("abr_cr_npc_ftr_3", OBJECT_TYPE_CREATURE), "Militia Sergeant");
+		else if (nType < 66) SetFirstName(ACR_SpawnObject("abr_cr_npc_clr_3", OBJECT_TYPE_CREATURE), "Militia Sergeant");
+		else SetFirstName(ACR_SpawnObject("abr_cr_npc_wiz_3", OBJECT_TYPE_CREATURE), "Militia Sergeant");
 	}
 }

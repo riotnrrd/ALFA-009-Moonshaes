@@ -56,5 +56,5 @@ void main();
 void main() {
 	int nNumber = d4() + 4;
 	int i;
-	for (i = 0; i < nNumber; i++) SetFirstName(ACR_SpawnObject("abr_cr_npc_war_1", OBJECT_TYPE_CREATURE), "Cantrev Private");
+	for (i = 0; i < nNumber; i++) SetFirstName(ACR_SpawnObject("abr_cr_npc_war_1", OBJECT_TYPE_CREATURE), "Militia Private");
 }
